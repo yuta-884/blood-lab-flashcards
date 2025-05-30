@@ -9,8 +9,12 @@ import Filters from './components/Filters'
 import Dashboard from './components/Dashboard'
 import Header from './components/Header'
 import { ThemeProvider } from './contexts/ThemeProvider'
+import { useSound } from './hooks/useSound'
 
 function App() {
+  // サウンド機能を使用
+  const { play } = useSound();
+  
   // すべてのカードを保持する状態
   const [allCards, setAllCards] = useState<Card[]>([]);
   // 今日学習すべきカードを保持する状態
@@ -144,9 +148,18 @@ function App() {
     }
     
     // 次のカードへ
-    setCurrentIndex(prevIndex => prevIndex + 1);
+    const cards = studyMode === 'due' ? filteredDueCards : filteredCards;
+    if (currentIndex >= cards.length - 1) {
+      // 学習完了時に win サウンドを再生
+      play('win');
+      // カードの最後に達した場合は最初に戻る
+      setCurrentIndex(0);
+    } else {
+      // 次のカードへ
+      setCurrentIndex(prevIndex => prevIndex + 1);
+    }
     setIsFlipped(false);
-  }, [currentIndex, filteredCards, filteredDueCards, progress, setProgress, setTodayAgain, setTodayCorrect, studyMode, setDueCards, setCurrentIndex, setIsFlipped]);
+  }, [currentIndex, filteredCards, filteredDueCards, progress, setProgress, setTodayAgain, setTodayCorrect, studyMode, setDueCards, setCurrentIndex, setIsFlipped, play]);
 
   // 全カードを学習するモードに切り替え
   const handleStudyAll = useCallback(() => {

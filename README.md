@@ -39,8 +39,15 @@ npm run build
 
 ## GitHub Pages へのデプロイ手順
 
-*注: 以下はプレースホルダーです。Milestone 5 で実装予定。*
+このプロジェクトは GitHub Actions を使用して自動デプロイされます。
 
-1. リポジトリの Settings > Pages で GitHub Pages を有効化
-2. デプロイワークフローを設定（準備中）
-3. main ブランチにプッシュすると自動的にデプロイされる予定
+1. リポジトリの Settings > Pages でソースを `gh-pages` ブランチに設定
+2. `main` ブランチに変更をプッシュすると、GitHub Actions が自動的にビルドして `gh-pages` ブランチにデプロイ
+3. アプリケーションは以下の URL で公開されます：
+   https://yuta-884.github.io/blood-lab-flashcards/
+
+### 機能
+
+- PWA（Progressive Web App）対応 - オフラインでも使用可能
+- ダークモード対応 - OS設定に自動追従と手動切替
+- サウンドフィードバック - 操作音で学習体験を向上

@@ -10,6 +10,26 @@ export default defineConfig({
       srcDir: 'src',
       registerType: 'autoUpdate',
       injectRegister: 'script',
+      // プリキャッシュに音声ファイルを含める
+      workbox: {
+        globPatterns: ['**/*.{js,css,html,ico,png,svg,mp3}'],
+        runtimeCaching: [
+          {
+            urlPattern: /^https:\/\/fonts\.googleapis\.com\/.*/i,
+            handler: 'CacheFirst',
+            options: {
+              cacheName: 'google-fonts-cache',
+              expiration: {
+                maxEntries: 10,
+                maxAgeSeconds: 60 * 60 * 24 * 365 // 1年
+              },
+              cacheableResponse: {
+                statuses: [0, 200]
+              }
+            }
+          }
+        ]
+      },
       manifest: {
         name: 'Blood Lab Flashcards',
         short_name: 'Blood Lab FC',
