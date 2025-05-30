@@ -10,7 +10,9 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@types/howler": "^2.2.12",
     "chart.js": "^4.4.9",
+    "howler": "^2.2.4",
     "react": "^19.1.0",
     "react-dom": "^19.1.0"
   },
