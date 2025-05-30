@@ -1,0 +1,1 @@
+if('serviceWorker' in navigator) {window.addEventListener('load', () => {navigator.serviceWorker.register('/blood-lab-flashcards/sw.js', { scope: '/blood-lab-flashcards/' })})}

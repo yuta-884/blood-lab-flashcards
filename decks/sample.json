@@ -1,0 +1,32 @@
+[
+  {
+    "id": "bun_high",
+    "front": "BUN > 25 mg/dL",
+    "back": ["高蛋白食/脱水/腎機能低下 などが考えられる"],
+    "category": "kidney"
+  },
+  {
+    "id": "creatinine_high",
+    "front": "Creatinine > 1.2 mg/dL",
+    "back": ["腎機能低下の可能性がある"],
+    "category": "kidney"
+  },
+  {
+    "id": "ast_alt_high",
+    "front": "AST/ALT > 40 U/L",
+    "back": ["肝機能障害の可能性がある"],
+    "category": "liver"
+  },
+  {
+    "id": "wbc_high",
+    "front": "WBC > 10,000/μL",
+    "back": ["感染症/炎症/白血病 などが考えられる"],
+    "category": "blood"
+  },
+  {
+    "id": "hb_low",
+    "front": "Hb < 13 g/dL (男性) / < 12 g/dL (女性)",
+    "back": ["貧血の可能性がある"],
+    "category": "blood"
+  }
+]
