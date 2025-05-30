@@ -7,6 +7,8 @@ import { updateProgress, getDueCards, getBoxCounts } from './utils/progressUtils
 import { formatDate } from './utils/dateUtils'
 import Filters from './components/Filters'
 import Dashboard from './components/Dashboard'
+import Header from './components/Header'
+import { ThemeProvider } from './contexts/ThemeProvider'
 
 function App() {
   // すべてのカードを保持する状態
@@ -314,15 +316,18 @@ function App() {
     />
   ) : null;
 
-  return (
-    <div className="flex flex-col items-center min-h-screen bg-gray-100 p-4">
+  const appContent = (
+    <div className="flex flex-col items-center min-h-screen bg-gray-50 dark:bg-gray-900 p-4 transition-colors duration-300">
+      {/* ヘッダー */}
+      <Header />
+      
       {/* 上部コントロール */}
       {/* 固定幅を持つ上部コントロールコンテナ */}
-      <div className="w-full max-w-4xl mb-4 flex-shrink-0">
+      <div className="w-full max-w-4xl mb-4 flex-shrink-0 mt-4">
         {/* フィルター部分 - カスタムデザインでレイアウト安定化 */}
-        <div className="bg-white rounded-lg shadow-md overflow-hidden mb-4">
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden mb-4">
           <div 
-            className="px-4 py-2 bg-blue-500 text-white cursor-pointer flex items-center"
+            className="px-4 py-2 bg-blue-500 dark:bg-blue-600 text-white cursor-pointer flex items-center"
             onClick={() => {
               const filtersEl = document.getElementById('filters-content');
               if (filtersEl) {
@@ -368,7 +373,7 @@ function App() {
       
       {/* カード表示エリア - メインコンテンツ */}
       <div className="flex-grow flex flex-col items-center justify-center w-full max-w-xl">
-        <div className="mb-2 text-lg font-bold text-black">
+        <div className="mb-2 text-lg font-bold text-gray-900 dark:text-gray-100">
           {studyMode === 'due' ? 
             `Today: ${currentIndex + 1} / ${filteredDueCards.length} cards due` : 
             `Card: ${currentIndex + 1} / ${filteredCards.length}`
@@ -376,7 +381,7 @@ function App() {
         </div>
         
         {studyMode === 'due' && (
-          <div className="mb-6 text-sm text-gray-600">
+          <div className="mb-6 text-sm text-gray-600 dark:text-gray-400">
             全体の進捗: {totalDueCards} / {allCards.length} 枚
           </div>
         )}
@@ -384,6 +389,13 @@ function App() {
         {cardComponent}
       </div>
     </div>
+  );
+  
+  // ThemeProvider でアプリ全体をラップ
+  return (
+    <ThemeProvider>
+      {appContent}
+    </ThemeProvider>
   )
 }
 
