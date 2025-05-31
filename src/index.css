@@ -12,12 +12,13 @@
 }
 
 body {
-  background-color: #f9fafb;
+  background-color: #f9fafb; /* gray-50 */
   color: #111827;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 .dark body {
-  background-color: #111827;
+  background-color: #111827; /* gray-900 */
   color: #f9fafb;
 }
 

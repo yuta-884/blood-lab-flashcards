@@ -235,11 +235,11 @@ function App() {
     });
     
     return (
-      <div className="flex flex-col items-center justify-center h-screen bg-gray-100 p-4">
-        <div className="text-2xl font-bold mb-4 text-black">🎉 今日の復習は完了！</div>
+      <div className="flex flex-col items-center justify-center h-screen bg-gray-50 dark:bg-gray-900 transition-colors p-4">
+        <div className="text-2xl font-bold mb-4 text-gray-900 dark:text-white">🎉 今日の復習は完了！</div>
         
         {nextDueDate && (
-          <div className="mb-6 text-lg text-black">
+          <div className="mb-6 text-lg text-gray-900 dark:text-white">
             次回の復習: {formatDate(nextDueDate)}
           </div>
         )}
@@ -251,9 +251,9 @@ function App() {
           すべて学習する
         </button>
         
-        <div className="mt-8 p-4 bg-white rounded-lg shadow-md w-80">
-          <h3 className="font-bold text-lg mb-2 text-black">箱別統計</h3>
-          <div className="flex justify-between text-black">
+        <div className="mt-8 p-4 bg-white dark:bg-gray-700 transition-colors rounded-lg shadow-md w-80">
+          <h3 className="font-bold text-lg mb-2 text-gray-900 dark:text-white">箱別統計</h3>
+          <div className="flex justify-between text-gray-900 dark:text-white">
             <div>Box 1: <span className="font-bold">{box1Count}枚</span></div>
             <div>Box 2: <span className="font-bold">{box2Count}枚</span></div>
             <div>Box 3: <span className="font-bold">{box3Count}枚</span></div>
@@ -266,8 +266,8 @@ function App() {
   // 全カードモードで学習が完了した場合
   if (studyMode === 'all' && currentIndex >= filteredCards.length) {
     return (
-      <div className="flex flex-col items-center justify-center h-screen bg-gray-100 p-4">
-        <div className="text-2xl font-bold mb-6 text-black">デッキ完了！🎉</div>
+      <div className="flex flex-col items-center justify-center h-screen bg-gray-50 dark:bg-gray-900 transition-colors p-4">
+        <div className="text-2xl font-bold mb-6 text-gray-900 dark:text-white">デッキ完了！🎉</div>
         <button 
           onClick={handleStudyDue}
           className="px-6 py-2 bg-blue-500 text-white rounded-lg shadow hover:bg-blue-600 transition-colors mb-4"
@@ -275,9 +275,9 @@ function App() {
           今日の復習に戻る
         </button>
         
-        <div className="mt-8 p-4 bg-white rounded-lg shadow-md w-80">
-          <h3 className="font-bold text-lg mb-2 text-black">箱別統計</h3>
-          <div className="flex justify-between text-black">
+        <div className="mt-8 p-4 bg-white dark:bg-gray-700 transition-colors rounded-lg shadow-md w-80">
+          <h3 className="font-bold text-lg mb-2 text-gray-900 dark:text-white">箱別統計</h3>
+          <div className="flex justify-between text-gray-900 dark:text-white">
             <div>Box 1: <span className="font-bold">{box1Count}枚</span></div>
             <div>Box 2: <span className="font-bold">{box2Count}枚</span></div>
             <div>Box 3: <span className="font-bold">{box3Count}枚</span></div>
