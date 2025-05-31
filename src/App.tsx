@@ -208,8 +208,12 @@ function App() {
   // 箱ごとのカード数を計算
   const [box1Count, box2Count, box3Count] = getBoxCounts(progress);
   
+  // 検索条件が指定されているか確認
+  const hasSearchFilter = searchTerm !== '' || selectedCategory !== 'all';
+  
   // 今日の学習が完了した場合
-  if (studyMode === 'due' && currentIndex >= filteredDueCards.length) {
+  // 検索条件が指定されている場合は、学習完了画面に移動しない
+  if (studyMode === 'due' && !hasSearchFilter && currentIndex >= filteredDueCards.length) {
     // 次回の学習日を計算（進捗情報から最も早い日付を取得）
     let nextDueDate = '';
     const now = new Date();

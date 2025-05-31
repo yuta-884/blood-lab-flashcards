@@ -3,10 +3,11 @@ import react from '@vitejs/plugin-react'
 import { VitePWA } from 'vite-plugin-pwa'
 
 // https://vite.dev/config/
-export default defineConfig({
+export default defineConfig(({ mode }) => ({
   plugins: [
     react(),
-    VitePWA({
+    // 開発モードでは Service Worker を無効化してエラーを回避
+    mode === 'production' && VitePWA({
       srcDir: 'src',
       registerType: 'autoUpdate',
       injectRegister: 'script',
@@ -54,6 +55,6 @@ export default defineConfig({
         ]
       }
     })
-  ],
+  ].filter(Boolean),
   base: '/blood-lab-flashcards/',
-})
+}))
