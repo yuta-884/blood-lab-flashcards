@@ -3,16 +3,19 @@ import react from '@vitejs/plugin-react'
 import { VitePWA } from 'vite-plugin-pwa'
 
 // https://vite.dev/config/
-export default defineConfig({
+export default defineConfig(({ mode }) => ({
   plugins: [
     react(),
-    VitePWA({
+    // 開発モードでは Service Worker を無効化してエラーを回避
+    mode === 'production' && VitePWA({
       srcDir: 'src',
       registerType: 'autoUpdate',
       injectRegister: 'script',
-      // プリキャッシュに音声ファイルを含める
+      // プリキャッシュに音声ファイルを含める（custom_deck.json は除外）
       workbox: {
         globPatterns: ['**/*.{js,css,html,ico,png,svg,mp3}'],
+        // custom_deck.json はランタイムキャッシュに含めない
+        globIgnores: ['**/custom_deck.json'],
         runtimeCaching: [
           {
             urlPattern: /^https:\/\/fonts\.googleapis\.com\/.*/i,
@@ -52,6 +55,6 @@ export default defineConfig({
         ]
       }
     })
-  ],
+  ].filter(Boolean),
   base: '/blood-lab-flashcards/',
-})
+}))

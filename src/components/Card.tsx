@@ -1,6 +1,5 @@
 // Card component for displaying flashcards
 import type { Card as CardType } from '../types';
-import { useSound } from '../hooks/useSound';
 
 interface CardProps {
   card: CardType;
@@ -11,18 +10,13 @@ interface CardProps {
 }
 
 export default function Card({ card, onFlip, isFlipped, onAnswer, showAnswerButtons = false }: CardProps) {
-  const { play } = useSound();
-
   const handleClick = () => {
     if (!isFlipped) {
-      play('flip');
       onFlip();
     }
   };
 
   const handleAnswer = (correct: boolean) => {
-    // 回答に応じたサウンドを再生
-    play(correct ? 'correct' : 'again');
     if (onAnswer) {
       onAnswer(correct);
     }
@@ -55,13 +49,13 @@ export default function Card({ card, onFlip, isFlipped, onAnswer, showAnswerButt
             onClick={() => handleAnswer(false)}
             className="btn-secondary bg-red-500 dark:bg-red-600 text-white hover:bg-red-600 dark:hover:bg-red-700 transition-colors"
           >
-            Again
+            もう一度
           </button>
           <button 
             onClick={() => handleAnswer(true)}
             className="btn-secondary bg-green-500 dark:bg-green-600 text-white hover:bg-green-600 dark:hover:bg-green-700 transition-colors"
           >
-            Correct
+            正解
           </button>
         </div>
       )}

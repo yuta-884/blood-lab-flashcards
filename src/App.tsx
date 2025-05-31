@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo, useCallback } from 'react'
+import { HashRouter as Router, Routes, Route } from 'react-router-dom'
 import './App.css'
 import type { Card, ProgressMap } from './types'
 import CardComponent from './components/Card'
@@ -8,12 +9,19 @@ import { formatDate } from './utils/dateUtils'
 import Filters from './components/Filters'
 import Dashboard from './components/Dashboard'
 import Header from './components/Header'
+import DeckEditor from './components/DeckEditor'
 import { ThemeProvider } from './contexts/ThemeProvider'
-import { useSound } from './hooks/useSound'
+
+// グローバルに型を拡張
+declare global {
+  interface Window {
+    reloadCustomDeck?: () => void;
+  }
+}
+
 
 function App() {
-  // サウンド機能を使用
-  const { play } = useSound();
+
   
   // すべてのカードを保持する状態
   const [allCards, setAllCards] = useState<Card[]>([]);
@@ -36,6 +44,10 @@ function App() {
   // 今日の正答率統計
   const [todayCorrect, setTodayCorrect] = useState(0);
   const [todayAgain, setTodayAgain] = useState(0);
+  // 選択されているデッキ（サンプルまたはカスタム）
+  const [selectedDeck] = useLocalStorage<string>('selectedDeck', 'sample');
+  // カスタムデッキのデータ
+  const [customDeck] = useLocalStorage<Card[]>('customDeck', []);
 
   // カードをめくる - useCallbackでメモ化してパフォーマンスを改善
   const handleCardFlip = useCallback(() => {
@@ -45,11 +57,22 @@ function App() {
   // カードの読み込み関数をメモ化
   const loadCardsCallback = useCallback(() => {
     setIsLoading(true);
-    fetch('./decks/sample.json')
-      .then(response => response.json())
-      .then(data => {
-        // 単一カードの場合は配列に変換
-        const cardArray = Array.isArray(data) ? data : [data];
+    
+    // 選択されたデッキに基づいてカードをロード
+    const loadCards = async () => {
+      try {
+        let cardArray: Card[] = [];
+        
+        if (selectedDeck === 'custom' && customDeck.length > 0) {
+          // カスタムデッキが選択されている場合
+          cardArray = customDeck;
+        } else {
+          // サンプルデッキをロード
+          const response = await fetch('./decks/sample.json');
+          const data = await response.json();
+          cardArray = Array.isArray(data) ? data : [data];
+        }
+        
         setAllCards(cardArray);
         
         // 今日学習すべきカードを抽出
@@ -61,12 +84,14 @@ function App() {
         setCurrentIndex(0);
         setIsFlipped(false);
         setIsLoading(false);
-      })
-      .catch(error => {
+      } catch (error) {
         console.error('Error loading cards:', error);
         setIsLoading(false);
-      });
-  }, [progress, setAllCards, setDueCards, setCurrentIndex, setIsFlipped, setIsLoading]);
+      }
+    };
+    
+    loadCards();
+  }, [progress, selectedDeck, customDeck, setAllCards, setDueCards, setCurrentIndex, setIsFlipped, setIsLoading]);
 
   // 初回読み込み時にカードを取得
   useEffect(() => {
@@ -75,9 +100,15 @@ function App() {
       loadCardsCallback();
     }, 100);
     
-    return () => clearTimeout(timer);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    // グローバル関数として公開して、DeckEditor から呼び出せるようにする
+    window.reloadCustomDeck = loadCardsCallback;
+    
+    return () => {
+      clearTimeout(timer);
+      // コンポーネントのアンマウント時にグローバル関数を削除
+      delete window.reloadCustomDeck;
+    };
+  }, [loadCardsCallback]);
 
   // 利用可能なカテゴリを抽出
   const categories = useMemo(() => {
@@ -150,8 +181,6 @@ function App() {
     // 次のカードへ
     const cards = studyMode === 'due' ? filteredDueCards : filteredCards;
     if (currentIndex >= cards.length - 1) {
-      // 学習完了時に win サウンドを再生
-      play('win');
       // カードの最後に達した場合は最初に戻る
       setCurrentIndex(0);
     } else {
@@ -159,7 +188,7 @@ function App() {
       setCurrentIndex(prevIndex => prevIndex + 1);
     }
     setIsFlipped(false);
-  }, [currentIndex, filteredCards, filteredDueCards, progress, setProgress, setTodayAgain, setTodayCorrect, studyMode, setDueCards, setCurrentIndex, setIsFlipped, play]);
+  }, [currentIndex, filteredCards, filteredDueCards, progress, setProgress, setTodayAgain, setTodayCorrect, studyMode, setDueCards, setCurrentIndex, setIsFlipped]);
 
   // 全カードを学習するモードに切り替え
   const handleStudyAll = useCallback(() => {
@@ -184,71 +213,15 @@ function App() {
   // 現在のカードセットを取得
   const currentCards = studyMode === 'due' ? filteredDueCards : filteredCards;
   
-  // カードがない場合
-  if (currentCards.length === 0) {
-    return (
-      <div className="flex flex-col items-center min-h-screen bg-gray-100 p-4">
-        {/* 上部コントロール */}
-        <div className="w-full max-w-4xl mb-4">
-          <details className="bg-white rounded-lg shadow-md overflow-hidden mb-2">
-            <summary className="px-4 py-2 bg-blue-500 text-white cursor-pointer">
-              フィルターと検索
-            </summary>
-            <div className="p-2">
-              <Filters
-                selectedCategory={selectedCategory}
-                setSelectedCategory={setSelectedCategory}
-                searchTerm={searchTerm}
-                setSearchTerm={setSearchTerm}
-                categories={categories}
-              />
-            </div>
-          </details>
-          
-          <Dashboard
-            cards={allCards}
-            filteredCards={filteredCards}
-            progress={progress}
-            todayCorrect={todayCorrect}
-            todayAgain={todayAgain}
-          />
-        </div>
-        
-        <div className="flex-grow flex flex-col items-center justify-center">
-          <div className="text-2xl font-bold mb-6 text-black">
-            {filteredCards.length === 0 ? 
-              '検索条件に一致するカードがありません' : 
-              '今日学習すべきカードがありません'}
-          </div>
-          <div className="flex space-x-4">
-            {filteredCards.length === 0 && (
-              <button 
-                onClick={() => {
-                  setSelectedCategory('all');
-                  setSearchTerm('');
-                }}
-                className="px-6 py-2 bg-blue-500 text-white rounded-lg shadow hover:bg-blue-600 transition-colors"
-              >
-                フィルターをリセット
-              </button>
-            )}
-            <button 
-              onClick={handleStudyAll}
-              className="px-6 py-2 bg-green-500 text-white rounded-lg shadow hover:bg-green-600 transition-colors"
-            >
-              全カードを学習する
-            </button>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
   // 箱ごとのカード数を計算
   const [box1Count, box2Count, box3Count] = getBoxCounts(progress);
   
+  // 検索条件が指定されているか確認
+  const hasSearchFilter = searchTerm !== '' || selectedCategory !== 'all';
+  
   // 今日の学習が完了した場合
-  if (studyMode === 'due' && currentIndex >= filteredDueCards.length) {
+  // 検索条件が指定されている場合は、学習完了画面に移動しない
+  if (studyMode === 'due' && !hasSearchFilter && currentIndex >= filteredDueCards.length) {
     // 次回の学習日を計算（進捗情報から最も早い日付を取得）
     let nextDueDate = '';
     const now = new Date();
@@ -262,11 +235,11 @@ function App() {
     });
     
     return (
-      <div className="flex flex-col items-center justify-center h-screen bg-gray-100 p-4">
-        <div className="text-2xl font-bold mb-4 text-black">🎉 今日の復習は完了！</div>
+      <div className="flex flex-col items-center justify-center h-screen bg-gray-50 dark:bg-gray-900 transition-colors p-4">
+        <div className="text-2xl font-bold mb-4 text-gray-900 dark:text-white">🎉 今日の復習は完了！</div>
         
         {nextDueDate && (
-          <div className="mb-6 text-lg text-black">
+          <div className="mb-6 text-lg text-gray-900 dark:text-white">
             次回の復習: {formatDate(nextDueDate)}
           </div>
         )}
@@ -275,12 +248,12 @@ function App() {
           onClick={handleStudyAll}
           className="px-6 py-2 bg-blue-500 text-white rounded-lg shadow hover:bg-blue-600 transition-colors mb-4"
         >
-          Study anyway
+          すべて学習する
         </button>
         
-        <div className="mt-8 p-4 bg-white rounded-lg shadow-md w-80">
-          <h3 className="font-bold text-lg mb-2 text-black">箱別統計</h3>
-          <div className="flex justify-between text-black">
+        <div className="mt-8 p-4 bg-white dark:bg-gray-700 transition-colors rounded-lg shadow-md w-80">
+          <h3 className="font-bold text-lg mb-2 text-gray-900 dark:text-white">箱別統計</h3>
+          <div className="flex justify-between text-gray-900 dark:text-white">
             <div>Box 1: <span className="font-bold">{box1Count}枚</span></div>
             <div>Box 2: <span className="font-bold">{box2Count}枚</span></div>
             <div>Box 3: <span className="font-bold">{box3Count}枚</span></div>
@@ -293,8 +266,8 @@ function App() {
   // 全カードモードで学習が完了した場合
   if (studyMode === 'all' && currentIndex >= filteredCards.length) {
     return (
-      <div className="flex flex-col items-center justify-center h-screen bg-gray-100 p-4">
-        <div className="text-2xl font-bold mb-6 text-black">デッキ完了！🎉</div>
+      <div className="flex flex-col items-center justify-center h-screen bg-gray-50 dark:bg-gray-900 transition-colors p-4">
+        <div className="text-2xl font-bold mb-6 text-gray-900 dark:text-white">デッキ完了！🎉</div>
         <button 
           onClick={handleStudyDue}
           className="px-6 py-2 bg-blue-500 text-white rounded-lg shadow hover:bg-blue-600 transition-colors mb-4"
@@ -302,9 +275,9 @@ function App() {
           今日の復習に戻る
         </button>
         
-        <div className="mt-8 p-4 bg-white rounded-lg shadow-md w-80">
-          <h3 className="font-bold text-lg mb-2 text-black">箱別統計</h3>
-          <div className="flex justify-between text-black">
+        <div className="mt-8 p-4 bg-white dark:bg-gray-700 transition-colors rounded-lg shadow-md w-80">
+          <h3 className="font-bold text-lg mb-2 text-gray-900 dark:text-white">箱別統計</h3>
+          <div className="flex justify-between text-gray-900 dark:text-white">
             <div>Box 1: <span className="font-bold">{box1Count}枚</span></div>
             <div>Box 2: <span className="font-bold">{box2Count}枚</span></div>
             <div>Box 3: <span className="font-bold">{box3Count}枚</span></div>
@@ -332,7 +305,7 @@ function App() {
   const appContent = (
     <div className="flex flex-col items-center min-h-screen bg-gray-50 dark:bg-gray-900 p-4 transition-colors duration-300">
       {/* ヘッダー */}
-      <Header />
+      <Header isEditor={false} />
       
       {/* 上部コントロール */}
       {/* 固定幅を持つ上部コントロールコンテナ */}
@@ -385,11 +358,12 @@ function App() {
       </div>
       
       {/* カード表示エリア - メインコンテンツ */}
-      <div className="flex-grow flex flex-col items-center justify-center w-full max-w-xl">
+      <div className="flex-grow flex flex-col items-center justify-center w-full max-w-xl min-h-[400px]">
+        {/* 見出し部分は常に表示 */}
         <div className="mb-2 text-lg font-bold text-gray-900 dark:text-gray-100">
           {studyMode === 'due' ? 
-            `Today: ${currentIndex + 1} / ${filteredDueCards.length} cards due` : 
-            `Card: ${currentIndex + 1} / ${filteredCards.length}`
+            `今日: ${filteredDueCards.length > 0 ? currentIndex + 1 : 0} / ${filteredDueCards.length} 枚のカード` : 
+            `カード: ${filteredCards.length > 0 ? currentIndex + 1 : 0} / ${filteredCards.length} 枚`
           }
         </div>
         
@@ -399,15 +373,37 @@ function App() {
           </div>
         )}
         
-        {cardComponent}
+        {/* カードがある場合はカードを表示、ない場合はメッセージを表示 */}
+        {(currentCards.length > 0 && currentIndex < currentCards.length) ? (
+          cardComponent
+        ) : (
+          <div className="text-center p-8 bg-white dark:bg-gray-800 rounded-lg shadow-md mt-4">
+            <p className="text-xl font-semibold text-gray-800 dark:text-gray-200 mb-2">該当するカードが見つかりません</p>
+            <p className="text-gray-600 dark:text-gray-400">検索条件を変更するか、フィルターをリセットしてください</p>
+            <button 
+              onClick={() => {
+                setSearchTerm('');
+                setSelectedCategory('all');
+              }}
+              className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
+            >
+              フィルターをリセット
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );
   
-  // ThemeProvider でアプリ全体をラップ
+  // ThemeProvider でアプリ全体をラップし、Router を追加
   return (
     <ThemeProvider>
-      {appContent}
+      <Router>
+        <Routes>
+          <Route path="/" element={appContent} />
+          <Route path="/editor" element={<DeckEditor />} />
+        </Routes>
+      </Router>
     </ThemeProvider>
   )
 }

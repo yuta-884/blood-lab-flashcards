@@ -39,25 +39,25 @@ const Dashboard: React.FC<DashboardProps> = ({
 
   // ダッシュボードのコンテンツをレンダリングする関数
   const renderDashboardContent = () => (
-    <div className="p-4 text-black">
+    <div className="p-4 text-black dark:text-white">
       <div className="flex flex-col md:flex-row md:space-x-4">
         <div className="w-full md:w-1/2 mb-4 md:mb-0">
-          <h3 className="text-lg font-medium mb-2">箱別カード数</h3>
+          <h3 className="text-lg font-medium mb-2 dark:text-white">箱別カード数</h3>
           <div className="grid grid-cols-3 gap-4 mb-4">
-            <div className="bg-red-100 p-3 rounded-lg text-center">
+            <div className="bg-red-100 dark:bg-red-900 p-3 rounded-lg text-center">
               <div className="text-xl font-bold text-red-600">{filteredBox1Count}</div>
-              <div className="text-sm">Box 1</div>
+              <div className="text-sm dark:text-white">ボックス 1</div>
             </div>
-            <div className="bg-blue-100 p-3 rounded-lg text-center">
+            <div className="bg-blue-100 dark:bg-blue-900 p-3 rounded-lg text-center">
               <div className="text-xl font-bold text-blue-600">{filteredBox2Count}</div>
-              <div className="text-sm">Box 2</div>
+              <div className="text-sm dark:text-white">ボックス 2</div>
             </div>
-            <div className="bg-green-100 p-3 rounded-lg text-center">
+            <div className="bg-green-100 dark:bg-green-900 p-3 rounded-lg text-center">
               <div className="text-xl font-bold text-green-600">{filteredBox3Count}</div>
-              <div className="text-sm">Box 3</div>
+              <div className="text-sm dark:text-white">ボックス 3</div>
             </div>
           </div>
-          <div className="mt-2 text-sm text-gray-600">
+          <div className="mt-2 text-sm text-gray-600 dark:text-gray-400">
             {filteredCards.length === cards.length 
               ? '全カード表示中' 
               : `${filteredCards.length} / ${cards.length} カードを表示中`}
@@ -65,18 +65,18 @@ const Dashboard: React.FC<DashboardProps> = ({
         </div>
         
         <div className="w-full md:w-1/2">
-          <h3 className="text-lg font-medium mb-2">今日の正答率</h3>
-          <div className="bg-gray-100 p-4 rounded-lg text-center">
-            <div className="text-3xl font-bold mb-2">{correctRate}%</div>
+          <h3 className="text-lg font-medium mb-2 dark:text-white">今日の正答率</h3>
+          <div className="bg-gray-100 dark:bg-gray-700 p-4 rounded-lg text-center">
+            <div className="text-3xl font-bold mb-2 dark:text-white">{correctRate}%</div>
             <div className="flex justify-center space-x-4">
-              <div>
-                <span className="text-green-600 font-bold">{todayCorrect}</span> 正解
+              <div className="dark:text-white">
+                <span className="text-green-600 dark:text-green-400 font-bold">{todayCorrect}</span> 正解
               </div>
-              <div>
-                <span className="text-red-600 font-bold">{todayAgain}</span> 復習
+              <div className="dark:text-white">
+                <span className="text-red-600 dark:text-red-400 font-bold">{todayAgain}</span> 復習
               </div>
             </div>
-            <div className="mt-2 text-sm text-gray-600">
+            <div className="mt-2 text-sm text-gray-600 dark:text-gray-400">
               今日の回答: {total} 回
             </div>
           </div>
@@ -90,13 +90,13 @@ const Dashboard: React.FC<DashboardProps> = ({
       {/* 固定幅と高さを持つコンテナ */}
       <div className="w-full">
         {/* コンテンツの表示/非表示を制御するカスタム設計 */}
-        <div className="bg-white rounded-lg shadow-md overflow-hidden">
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden">
           {/* ヘッダー部分 - 常に表示 */}
           <div 
             className="px-4 py-3 bg-blue-500 text-white cursor-pointer flex items-center"
             onClick={() => setIsOpen(!isOpen)}
           >
-            <span className="text-lg font-medium">📊 Progress</span>
+            <span className="text-lg font-medium">📊 進捗状況</span>
             <span className="ml-auto">{isOpen ? '▲' : '▼'}</span>
           </div>
           
