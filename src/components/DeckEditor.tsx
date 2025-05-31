@@ -4,6 +4,7 @@ import Papa from 'papaparse';
 import { saveAs } from 'file-saver';
 import type { Card } from '../types';
 import { useLocalStorage } from '../hooks/useLocalStorage';
+import Header from './Header';
 
 // PapaParseの結果の型定義
 interface PapaParseResult {
@@ -198,7 +199,11 @@ const DeckEditor: React.FC = () => {
   };
 
   return (
-    <div className="container mx-auto p-4 max-w-6xl">
+    <div className="flex flex-col items-center min-h-screen bg-gray-50 dark:bg-gray-900 p-4 transition-colors duration-300">
+      {/* ヘッダー */}
+      <Header />
+      
+      <div className="container mx-auto p-4 max-w-6xl w-full">
       <h2 className="text-2xl font-bold mb-4 text-gray-900 dark:text-white">Deck Editor</h2>
       
       {/* CSV アップロード */}
@@ -348,6 +353,7 @@ const DeckEditor: React.FC = () => {
           Deck saved!
         </div>
       )}
+      </div>
     </div>
   );
 };
