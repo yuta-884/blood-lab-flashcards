@@ -407,26 +407,25 @@ function App() {
       
       {/* カード表示エリア - メインコンテンツ */}
       <div className="flex-grow flex flex-col items-center justify-center w-full max-w-xl min-h-[400px]">
-        {/* カードが表示されている場合は通常表示、それ以外はメッセージ表示 */}
+        {/* 見出し部分は常に表示 */}
+        <div className="mb-2 text-lg font-bold text-gray-900 dark:text-gray-100">
+          {studyMode === 'due' ? 
+            `Today: ${filteredDueCards.length > 0 ? currentIndex + 1 : 0} / ${filteredDueCards.length} cards due` : 
+            `Card: ${filteredCards.length > 0 ? currentIndex + 1 : 0} / ${filteredCards.length}`
+          }
+        </div>
+        
+        {studyMode === 'due' && (
+          <div className="mb-6 text-sm text-gray-600 dark:text-gray-400">
+            全体の進捗: {totalDueCards} / {allCards.length} 枚
+          </div>
+        )}
+        
+        {/* カードがある場合はカードを表示、ない場合はメッセージを表示 */}
         {(currentCards.length > 0 && currentIndex < currentCards.length) ? (
-          <>
-            <div className="mb-2 text-lg font-bold text-gray-900 dark:text-gray-100">
-              {studyMode === 'due' ? 
-                `Today: ${currentIndex + 1} / ${filteredDueCards.length} cards due` : 
-                `Card: ${currentIndex + 1} / ${filteredCards.length}`
-              }
-            </div>
-            
-            {studyMode === 'due' && (
-              <div className="mb-6 text-sm text-gray-600 dark:text-gray-400">
-                全体の進捗: {totalDueCards} / {allCards.length} 枚
-              </div>
-            )}
-            
-            {cardComponent}
-          </>
+          cardComponent
         ) : (
-          <div className="text-center p-8 bg-white dark:bg-gray-800 rounded-lg shadow-md">
+          <div className="text-center p-8 bg-white dark:bg-gray-800 rounded-lg shadow-md mt-4">
             <p className="text-xl font-semibold text-gray-800 dark:text-gray-200 mb-2">該当するカードが見つかりません</p>
             <p className="text-gray-600 dark:text-gray-400">検索条件を変更するか、フィルターをリセットしてください</p>
             <button 
