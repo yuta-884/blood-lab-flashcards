@@ -10,9 +10,11 @@ export default defineConfig({
       srcDir: 'src',
       registerType: 'autoUpdate',
       injectRegister: 'script',
-      // プリキャッシュに音声ファイルを含める
+      // プリキャッシュに音声ファイルを含める（custom_deck.json は除外）
       workbox: {
         globPatterns: ['**/*.{js,css,html,ico,png,svg,mp3}'],
+        // custom_deck.json はランタイムキャッシュに含めない
+        globIgnores: ['**/custom_deck.json'],
         runtimeCaching: [
           {
             urlPattern: /^https:\/\/fonts\.googleapis\.com\/.*/i,

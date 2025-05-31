@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo, useCallback } from 'react'
+import { HashRouter as Router, Routes, Route } from 'react-router-dom'
 import './App.css'
 import type { Card, ProgressMap } from './types'
 import CardComponent from './components/Card'
@@ -8,6 +9,7 @@ import { formatDate } from './utils/dateUtils'
 import Filters from './components/Filters'
 import Dashboard from './components/Dashboard'
 import Header from './components/Header'
+import DeckEditor from './components/DeckEditor'
 import { ThemeProvider } from './contexts/ThemeProvider'
 import { useSound } from './hooks/useSound'
 
@@ -36,6 +38,12 @@ function App() {
   // 今日の正答率統計
   const [todayCorrect, setTodayCorrect] = useState(0);
   const [todayAgain, setTodayAgain] = useState(0);
+  // 選択されているデッキ（サンプルまたはカスタム）
+  // @ts-expect-error - 他のコンポーネントで使用されるため必要
+  const [selectedDeck, setSelectedDeck] = useLocalStorage<string>('selectedDeck', 'sample');
+  // カスタムデッキのデータ
+  // @ts-expect-error - 他のコンポーネントで使用されるため必要
+  const [customDeck, setCustomDeck] = useLocalStorage<Card[]>('customDeck', []);
 
   // カードをめくる - useCallbackでメモ化してパフォーマンスを改善
   const handleCardFlip = useCallback(() => {
@@ -45,11 +53,22 @@ function App() {
   // カードの読み込み関数をメモ化
   const loadCardsCallback = useCallback(() => {
     setIsLoading(true);
-    fetch('./decks/sample.json')
-      .then(response => response.json())
-      .then(data => {
-        // 単一カードの場合は配列に変換
-        const cardArray = Array.isArray(data) ? data : [data];
+    
+    // 選択されたデッキに基づいてカードをロード
+    const loadCards = async () => {
+      try {
+        let cardArray: Card[] = [];
+        
+        if (selectedDeck === 'custom' && customDeck.length > 0) {
+          // カスタムデッキが選択されている場合
+          cardArray = customDeck;
+        } else {
+          // サンプルデッキをロード
+          const response = await fetch('./decks/sample.json');
+          const data = await response.json();
+          cardArray = Array.isArray(data) ? data : [data];
+        }
+        
         setAllCards(cardArray);
         
         // 今日学習すべきカードを抽出
@@ -61,12 +80,14 @@ function App() {
         setCurrentIndex(0);
         setIsFlipped(false);
         setIsLoading(false);
-      })
-      .catch(error => {
+      } catch (error) {
         console.error('Error loading cards:', error);
         setIsLoading(false);
-      });
-  }, [progress, setAllCards, setDueCards, setCurrentIndex, setIsFlipped, setIsLoading]);
+      }
+    };
+    
+    loadCards();
+  }, [progress, selectedDeck, customDeck, setAllCards, setDueCards, setCurrentIndex, setIsFlipped, setIsLoading]);
 
   // 初回読み込み時にカードを取得
   useEffect(() => {
@@ -404,10 +425,15 @@ function App() {
     </div>
   );
   
-  // ThemeProvider でアプリ全体をラップ
+  // ThemeProvider でアプリ全体をラップし、Router を追加
   return (
     <ThemeProvider>
-      {appContent}
+      <Router>
+        <Routes>
+          <Route path="/" element={appContent} />
+          <Route path="/editor" element={<DeckEditor />} />
+        </Routes>
+      </Router>
     </ThemeProvider>
   )
 }
