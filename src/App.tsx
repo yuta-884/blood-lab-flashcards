@@ -67,8 +67,9 @@ function App() {
           // カスタムデッキが選択されている場合
           cardArray = customDeck;
         } else {
-          // サンプルデッキをロード
-          const response = await fetch('./decks/sample.json');
+          // サンプルデッキをロード（キャッシュ回避のためにタイムスタンプを追加）
+          const timestamp = new Date().getTime();
+          const response = await fetch(`./decks/sample.json?t=${timestamp}`);
           const data = await response.json();
           cardArray = Array.isArray(data) ? data : [data];
         }
