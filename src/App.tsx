@@ -208,9 +208,11 @@ function App() {
   // カードがない場合
   if (currentCards.length === 0) {
     return (
-      <div className="flex flex-col items-center min-h-screen bg-gray-100 p-4">
-        {/* 上部コントロール */}
-        <div className="w-full max-w-4xl mb-4">
+      <div className="flex flex-col items-center min-h-screen bg-gray-50 dark:bg-gray-900 p-4 transition-colors duration-300">
+        {/* ヘッダー */}
+        <Header />
+        
+        <div className="w-full max-w-4xl mb-4 flex-shrink-0 mt-4">
           <details className="bg-white rounded-lg shadow-md overflow-hidden mb-2">
             <summary className="px-4 py-2 bg-blue-500 text-white cursor-pointer">
               フィルターと検索
