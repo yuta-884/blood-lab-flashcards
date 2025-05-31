@@ -12,6 +12,13 @@ import Header from './components/Header'
 import DeckEditor from './components/DeckEditor'
 import { ThemeProvider } from './contexts/ThemeProvider'
 
+// グローバルに型を拡張
+declare global {
+  interface Window {
+    reloadCustomDeck?: () => void;
+  }
+}
+
 
 function App() {
 
@@ -93,9 +100,15 @@ function App() {
       loadCardsCallback();
     }, 100);
     
-    return () => clearTimeout(timer);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    // グローバル関数として公開して、DeckEditor から呼び出せるようにする
+    window.reloadCustomDeck = loadCardsCallback;
+    
+    return () => {
+      clearTimeout(timer);
+      // コンポーネントのアンマウント時にグローバル関数を削除
+      delete window.reloadCustomDeck;
+    };
+  }, [loadCardsCallback]);
 
   // 利用可能なカテゴリを抽出
   const categories = useMemo(() => {

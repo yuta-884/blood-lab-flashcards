@@ -145,7 +145,14 @@ const DeckEditor: React.FC = () => {
 
     setCustomDeck(deck);
     setSelectedDeck('custom');
-    navigate('/');
+    
+    // App コンポーネントのカード再読み込み関数を呼び出す
+    setTimeout(() => {
+      if (window.reloadCustomDeck) {
+        window.reloadCustomDeck();
+      }
+      navigate('/');
+    }, 100);
   };
 
   // JSON としてダウンロード
