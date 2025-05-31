@@ -407,7 +407,8 @@ function App() {
       
       {/* カード表示エリア - メインコンテンツ */}
       <div className="flex-grow flex flex-col items-center justify-center w-full max-w-xl min-h-[400px]">
-        {(filteredCards.length > 0 || filteredDueCards.length > 0) ? (
+        {/* カードが表示されている場合は通常表示、それ以外はメッセージ表示 */}
+        {(currentCards.length > 0 && currentIndex < currentCards.length) ? (
           <>
             <div className="mb-2 text-lg font-bold text-gray-900 dark:text-gray-100">
               {studyMode === 'due' ? 
