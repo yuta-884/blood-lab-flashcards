@@ -54,14 +54,14 @@ const DeckEditor: React.FC = () => {
       const cardErrors: string[] = [];
 
       // 必須フィールドのチェック
-      if (!card.id) cardErrors.push('ID is required');
-      if (!card.front) cardErrors.push('Front is required');
-      if (!card.back || card.back.length === 0) cardErrors.push('Back is required');
-      if (!card.category) cardErrors.push('Category is required');
+      if (!card.id) cardErrors.push('IDが必要です');
+      if (!card.front) cardErrors.push('表面が必要です');
+      if (!card.back || card.back.length === 0) cardErrors.push('裏面が必要です');
+      if (!card.category) cardErrors.push('カテゴリーが必要です');
 
       // ID の一意性チェック
       if (card.id && ids.has(card.id)) {
-        cardErrors.push('ID must be unique');
+        cardErrors.push('IDは一意である必要があります');
       } else if (card.id) {
         ids.add(card.id);
       }
@@ -126,7 +126,7 @@ const DeckEditor: React.FC = () => {
   // デッキをローカルに保存
   const saveLocalDeck = () => {
     if (!validateDeck(deck)) {
-      alert('Please fix validation errors before saving');
+      alert('保存する前にエラーを修正してください');
       return;
     }
 
@@ -139,7 +139,7 @@ const DeckEditor: React.FC = () => {
   // 現在のデッキを使用して学習画面に戻る
   const useCurrentDeck = () => {
     if (!validateDeck(deck)) {
-      alert('Please fix validation errors before using this deck');
+      alert('このデッキを使用する前にエラーを修正してください');
       return;
     }
 
@@ -151,7 +151,7 @@ const DeckEditor: React.FC = () => {
   // JSON としてダウンロード
   const downloadJson = () => {
     if (!validateDeck(deck)) {
-      alert('Please fix validation errors before downloading');
+      alert('ダウンロードする前にエラーを修正してください');
       return;
     }
 
@@ -161,7 +161,7 @@ const DeckEditor: React.FC = () => {
 
   // デフォルトデッキにリセット
   const resetToDefault = () => {
-    if (window.confirm('Are you sure you want to reset to the default deck? Your custom deck will be deleted.')) {
+    if (window.confirm('デフォルトデッキにリセットしてもよろしいですか？カスタムデッキは削除されます。')) {
       setSelectedDeck('sample');
       setCustomDeck([]);
       localStorage.removeItem('customDeck');
@@ -204,14 +204,14 @@ const DeckEditor: React.FC = () => {
       <Header isEditor={true} />
       
       <div className="container mx-auto p-4 max-w-6xl w-full">
-      <h2 className="text-2xl font-bold mb-4 text-gray-900 dark:text-white">Deck Editor</h2>
+      <h2 className="text-2xl font-bold mb-4 text-gray-900 dark:text-white">デッキエディター</h2>
       
       {/* CSV アップロード */}
       <div className="mb-6 bg-white dark:bg-gray-800 p-4 rounded-lg shadow">
-        <h3 className="text-lg font-semibold mb-2 text-gray-900 dark:text-white">Import Cards</h3>
+        <h3 className="text-lg font-semibold mb-2 text-gray-900 dark:text-white">カードのインポート</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label className="block mb-2 text-gray-700 dark:text-gray-300">Upload CSV File</label>
+            <label className="block mb-2 text-gray-700 dark:text-gray-300">CSVファイルをアップロード</label>
             <input
               type="file"
               accept=".csv"
@@ -220,22 +220,22 @@ const DeckEditor: React.FC = () => {
               className="block w-full text-sm text-gray-900 dark:text-gray-300 file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 dark:file:bg-gray-700 dark:file:text-gray-200"
             />
             <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
-              CSV format: id,front,back,category (back can be semicolon-separated for multiple lines)
+              CSV形式: id,表面,裏面,カテゴリー (裏面はセミコロン区切りで複数行指定可能)
             </p>
           </div>
           <div>
-            <label className="block mb-2 text-gray-700 dark:text-gray-300">Or Paste CSV Content</label>
+            <label className="block mb-2 text-gray-700 dark:text-gray-300">CSVテキストを貼り付け</label>
             <textarea
               ref={csvTextAreaRef}
               className="w-full p-2 border rounded dark:bg-gray-700 dark:text-white dark:border-gray-600"
               rows={5}
-              placeholder="id,front,back,category"
+              placeholder="id,表面,裏面,カテゴリー"
             ></textarea>
             <button
               onClick={handleCsvTextParse}
               className="mt-2 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
             >
-              Parse CSV
+              CSVを解析
             </button>
           </div>
         </div>
@@ -244,12 +244,12 @@ const DeckEditor: React.FC = () => {
       {/* カード編集テーブル */}
       <div className="mb-6 overflow-x-auto bg-white dark:bg-gray-800 p-4 rounded-lg shadow">
         <div className="flex justify-between mb-4">
-          <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Edit Cards</h3>
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-white">カード編集</h3>
           <button
             onClick={addCard}
             className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 transition-colors"
           >
-            Add Card
+            カード追加
           </button>
         </div>
         
@@ -257,10 +257,10 @@ const DeckEditor: React.FC = () => {
           <thead>
             <tr className="bg-gray-100 dark:bg-gray-700">
               <th className="p-2 text-left text-gray-900 dark:text-white border dark:border-gray-600">ID</th>
-              <th className="p-2 text-left text-gray-900 dark:text-white border dark:border-gray-600">Front</th>
-              <th className="p-2 text-left text-gray-900 dark:text-white border dark:border-gray-600">Back (semicolon-separated)</th>
-              <th className="p-2 text-left text-gray-900 dark:text-white border dark:border-gray-600">Category</th>
-              <th className="p-2 text-left text-gray-900 dark:text-white border dark:border-gray-600">Actions</th>
+              <th className="p-2 text-left text-gray-900 dark:text-white border dark:border-gray-600">表面</th>
+              <th className="p-2 text-left text-gray-900 dark:text-white border dark:border-gray-600">裏面 (セミコロン区切り)</th>
+              <th className="p-2 text-left text-gray-900 dark:text-white border dark:border-gray-600">カテゴリー</th>
+              <th className="p-2 text-left text-gray-900 dark:text-white border dark:border-gray-600">操作</th>
             </tr>
           </thead>
           <tbody>
@@ -303,7 +303,7 @@ const DeckEditor: React.FC = () => {
                     onClick={() => removeCard(index)}
                     className="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600 transition-colors"
                   >
-                    Delete
+                    削除
                   </button>
                 </td>
               </tr>
@@ -312,7 +312,7 @@ const DeckEditor: React.FC = () => {
         </table>
         
         {deck.length === 0 && (
-          <p className="text-center py-4 text-gray-500 dark:text-gray-400">No cards in deck. Upload a CSV or add cards manually.</p>
+          <p className="text-center py-4 text-gray-500 dark:text-gray-400">デッキにカードがありません。CSVをアップロードするか、手動でカードを追加してください。</p>
         )}
       </div>
       
@@ -323,27 +323,27 @@ const DeckEditor: React.FC = () => {
           className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
           disabled={Object.keys(errors).length > 0}
         >
-          Save Locally
+          ローカルに保存
         </button>
         <button
           onClick={useCurrentDeck}
           className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 transition-colors"
           disabled={Object.keys(errors).length > 0}
         >
-          Use Now
+          今すぐ使用
         </button>
         <button
           onClick={downloadJson}
           className="px-4 py-2 bg-purple-500 text-white rounded hover:bg-purple-600 transition-colors"
           disabled={Object.keys(errors).length > 0}
         >
-          Download JSON
+          JSONをダウンロード
         </button>
         <button
           onClick={resetToDefault}
           className="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600 transition-colors"
         >
-          Reset to Default
+          デフォルトにリセット
         </button>
       </div>
       

@@ -46,15 +46,15 @@ const Dashboard: React.FC<DashboardProps> = ({
           <div className="grid grid-cols-3 gap-4 mb-4">
             <div className="bg-red-100 p-3 rounded-lg text-center">
               <div className="text-xl font-bold text-red-600">{filteredBox1Count}</div>
-              <div className="text-sm">Box 1</div>
+              <div className="text-sm">ボックス 1</div>
             </div>
             <div className="bg-blue-100 p-3 rounded-lg text-center">
               <div className="text-xl font-bold text-blue-600">{filteredBox2Count}</div>
-              <div className="text-sm">Box 2</div>
+              <div className="text-sm">ボックス 2</div>
             </div>
             <div className="bg-green-100 p-3 rounded-lg text-center">
               <div className="text-xl font-bold text-green-600">{filteredBox3Count}</div>
-              <div className="text-sm">Box 3</div>
+              <div className="text-sm">ボックス 3</div>
             </div>
           </div>
           <div className="mt-2 text-sm text-gray-600">
@@ -96,7 +96,7 @@ const Dashboard: React.FC<DashboardProps> = ({
             className="px-4 py-3 bg-blue-500 text-white cursor-pointer flex items-center"
             onClick={() => setIsOpen(!isOpen)}
           >
-            <span className="text-lg font-medium">📊 Progress</span>
+            <span className="text-lg font-medium">📊 進捗状況</span>
             <span className="ml-auto">{isOpen ? '▲' : '▼'}</span>
           </div>
           

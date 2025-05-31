@@ -38,11 +38,9 @@ function App() {
   const [todayCorrect, setTodayCorrect] = useState(0);
   const [todayAgain, setTodayAgain] = useState(0);
   // 選択されているデッキ（サンプルまたはカスタム）
-  // @ts-expect-error - 他のコンポーネントで使用されるため必要
-  const [selectedDeck, setSelectedDeck] = useLocalStorage<string>('selectedDeck', 'sample');
+  const [selectedDeck] = useLocalStorage<string>('selectedDeck', 'sample');
   // カスタムデッキのデータ
-  // @ts-expect-error - 他のコンポーネントで使用されるため必要
-  const [customDeck, setCustomDeck] = useLocalStorage<Card[]>('customDeck', []);
+  const [customDeck] = useLocalStorage<Card[]>('customDeck', []);
 
   // カードをめくる - useCallbackでメモ化してパフォーマンスを改善
   const handleCardFlip = useCallback(() => {
@@ -237,7 +235,7 @@ function App() {
           onClick={handleStudyAll}
           className="px-6 py-2 bg-blue-500 text-white rounded-lg shadow hover:bg-blue-600 transition-colors mb-4"
         >
-          Study anyway
+          すべて学習する
         </button>
         
         <div className="mt-8 p-4 bg-white rounded-lg shadow-md w-80">
@@ -351,8 +349,8 @@ function App() {
         {/* 見出し部分は常に表示 */}
         <div className="mb-2 text-lg font-bold text-gray-900 dark:text-gray-100">
           {studyMode === 'due' ? 
-            `Today: ${filteredDueCards.length > 0 ? currentIndex + 1 : 0} / ${filteredDueCards.length} cards due` : 
-            `Card: ${filteredCards.length > 0 ? currentIndex + 1 : 0} / ${filteredCards.length}`
+            `今日: ${filteredDueCards.length > 0 ? currentIndex + 1 : 0} / ${filteredDueCards.length} 枚のカード` : 
+            `カード: ${filteredCards.length > 0 ? currentIndex + 1 : 0} / ${filteredCards.length} 枚`
           }
         </div>
         

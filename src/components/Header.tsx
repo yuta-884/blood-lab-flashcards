@@ -7,7 +7,7 @@ interface HeaderProps {
   isEditor?: boolean;
 }
 
-const Header: React.FC<HeaderProps> = ({ title = 'Blood Lab Flashcards', isEditor = false }) => {
+const Header: React.FC<HeaderProps> = ({ title = '血液検査フラッシュカード', isEditor = false }) => {
   const { theme, toggleTheme } = useTheme();
 
   return (
@@ -21,7 +21,7 @@ const Header: React.FC<HeaderProps> = ({ title = 'Blood Lab Flashcards', isEdito
           className="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors flex items-center"
         >
           <span className="mr-1" role="img" aria-label="Editor">{isEditor ? '🔙' : '📝'}</span>
-          {isEditor ? 'Back to Learn' : 'Deck Editor'}
+          {isEditor ? '学習に戻る' : 'デッキエディター'}
         </Link>
       </div>
       
@@ -30,12 +30,12 @@ const Header: React.FC<HeaderProps> = ({ title = 'Blood Lab Flashcards', isEdito
         <button 
           onClick={toggleTheme}
           className="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
-          aria-label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
+          aria-label={theme === 'dark' ? 'ライトモードに切り替え' : 'ダークモードに切り替え'}
         >
           {theme === 'dark' ? (
-            <span className="text-xl" role="img" aria-label="Light mode">🌞</span>
+            <span className="text-xl" role="img" aria-label="ライトモード">🌞</span>
           ) : (
-            <span className="text-xl" role="img" aria-label="Dark mode">🌜</span>
+            <span className="text-xl" role="img" aria-label="ダークモード">🌜</span>
           )}
         </button>
       </div>
