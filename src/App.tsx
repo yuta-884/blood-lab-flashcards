@@ -406,21 +406,39 @@ function App() {
       </div>
       
       {/* カード表示エリア - メインコンテンツ */}
-      <div className="flex-grow flex flex-col items-center justify-center w-full max-w-xl">
-        <div className="mb-2 text-lg font-bold text-gray-900 dark:text-gray-100">
-          {studyMode === 'due' ? 
-            `Today: ${currentIndex + 1} / ${filteredDueCards.length} cards due` : 
-            `Card: ${currentIndex + 1} / ${filteredCards.length}`
-          }
-        </div>
-        
-        {studyMode === 'due' && (
-          <div className="mb-6 text-sm text-gray-600 dark:text-gray-400">
-            全体の進捗: {totalDueCards} / {allCards.length} 枚
+      <div className="flex-grow flex flex-col items-center justify-center w-full max-w-xl min-h-[400px]">
+        {(filteredCards.length > 0 || filteredDueCards.length > 0) ? (
+          <>
+            <div className="mb-2 text-lg font-bold text-gray-900 dark:text-gray-100">
+              {studyMode === 'due' ? 
+                `Today: ${currentIndex + 1} / ${filteredDueCards.length} cards due` : 
+                `Card: ${currentIndex + 1} / ${filteredCards.length}`
+              }
+            </div>
+            
+            {studyMode === 'due' && (
+              <div className="mb-6 text-sm text-gray-600 dark:text-gray-400">
+                全体の進捗: {totalDueCards} / {allCards.length} 枚
+              </div>
+            )}
+            
+            {cardComponent}
+          </>
+        ) : (
+          <div className="text-center p-8 bg-white dark:bg-gray-800 rounded-lg shadow-md">
+            <p className="text-xl font-semibold text-gray-800 dark:text-gray-200 mb-2">該当するカードが見つかりません</p>
+            <p className="text-gray-600 dark:text-gray-400">検索条件を変更するか、フィルターをリセットしてください</p>
+            <button 
+              onClick={() => {
+                setSearchTerm('');
+                setSelectedCategory('all');
+              }}
+              className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
+            >
+              フィルターをリセット
+            </button>
           </div>
         )}
-        
-        {cardComponent}
       </div>
     </div>
   );
