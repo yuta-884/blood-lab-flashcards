@@ -1,17 +1,16 @@
 import React from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { useTheme } from '../hooks/useTheme';
 import { useSound } from '../hooks/useSound';
 
 interface HeaderProps {
   title?: string;
+  isEditor?: boolean;
 }
 
-const Header: React.FC<HeaderProps> = ({ title = 'Blood Lab Flashcards' }) => {
+const Header: React.FC<HeaderProps> = ({ title = 'Blood Lab Flashcards', isEditor = false }) => {
   const { theme, toggleTheme } = useTheme();
   const { soundEnabled, toggleSound } = useSound();
-  const location = useLocation();
-  const isEditor = location.pathname === '/editor';
 
   return (
     <header className="w-full bg-white dark:bg-gray-800 shadow-md py-4 px-6 flex justify-between items-center">

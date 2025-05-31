@@ -205,68 +205,6 @@ function App() {
   // 現在のカードセットを取得
   const currentCards = studyMode === 'due' ? filteredDueCards : filteredCards;
   
-  // カードがない場合
-  if (currentCards.length === 0) {
-    return (
-      <div className="flex flex-col items-center min-h-screen bg-gray-50 dark:bg-gray-900 p-4 transition-colors duration-300">
-        {/* ヘッダー */}
-        <Header />
-        
-        <div className="w-full max-w-4xl mb-4 flex-shrink-0 mt-4">
-          <details className="bg-white rounded-lg shadow-md overflow-hidden mb-2">
-            <summary className="px-4 py-2 bg-blue-500 text-white cursor-pointer">
-              フィルターと検索
-            </summary>
-            <div className="p-2">
-              <Filters
-                selectedCategory={selectedCategory}
-                setSelectedCategory={setSelectedCategory}
-                searchTerm={searchTerm}
-                setSearchTerm={setSearchTerm}
-                categories={categories}
-              />
-            </div>
-          </details>
-          
-          <Dashboard
-            cards={allCards}
-            filteredCards={filteredCards}
-            progress={progress}
-            todayCorrect={todayCorrect}
-            todayAgain={todayAgain}
-          />
-        </div>
-        
-        <div className="flex-grow flex flex-col items-center justify-center">
-          <div className="text-2xl font-bold mb-6 text-black">
-            {filteredCards.length === 0 ? 
-              '検索条件に一致するカードがありません' : 
-              '今日学習すべきカードがありません'}
-          </div>
-          <div className="flex space-x-4">
-            {filteredCards.length === 0 && (
-              <button 
-                onClick={() => {
-                  setSelectedCategory('all');
-                  setSearchTerm('');
-                }}
-                className="px-6 py-2 bg-blue-500 text-white rounded-lg shadow hover:bg-blue-600 transition-colors"
-              >
-                フィルターをリセット
-              </button>
-            )}
-            <button 
-              onClick={handleStudyAll}
-              className="px-6 py-2 bg-green-500 text-white rounded-lg shadow hover:bg-green-600 transition-colors"
-            >
-              全カードを学習する
-            </button>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
   // 箱ごとのカード数を計算
   const [box1Count, box2Count, box3Count] = getBoxCounts(progress);
   
@@ -355,7 +293,7 @@ function App() {
   const appContent = (
     <div className="flex flex-col items-center min-h-screen bg-gray-50 dark:bg-gray-900 p-4 transition-colors duration-300">
       {/* ヘッダー */}
-      <Header />
+      <Header isEditor={false} />
       
       {/* 上部コントロール */}
       {/* 固定幅を持つ上部コントロールコンテナ */}
