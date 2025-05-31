@@ -1,6 +1,5 @@
 // Card component for displaying flashcards
 import type { Card as CardType } from '../types';
-import { useSound } from '../hooks/useSound';
 
 interface CardProps {
   card: CardType;
@@ -11,18 +10,13 @@ interface CardProps {
 }
 
 export default function Card({ card, onFlip, isFlipped, onAnswer, showAnswerButtons = false }: CardProps) {
-  const { play } = useSound();
-
   const handleClick = () => {
     if (!isFlipped) {
-      play('flip');
       onFlip();
     }
   };
 
   const handleAnswer = (correct: boolean) => {
-    // 回答に応じたサウンドを再生
-    play(correct ? 'correct' : 'again');
     if (onAnswer) {
       onAnswer(correct);
     }
